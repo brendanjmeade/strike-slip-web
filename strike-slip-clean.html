@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Strike slip</title>
+  <link rel="stylesheet" type="text/css" href="https://iodide.io/master/iodide.master.css">
+</head>
+<body>
+<script id="jsmd" type="text/jsmd">
+%% meta
+{
+  "title": "Strike slip",
+  "viewMode": "presentation",
+  "lastSaved": "2018-04-25T23:38:39.590Z",
+  "lastExport": "2018-05-05T23:31:35.628Z"
+}
+
+
+%% js
+// this is a hack to allow the ode45-cash-karp lib to import as expected.
+// need to browserify this module.
+module = {}
+
+%% resource
+https://cdn.jsdelivr.net/npm/ode45-cash-karp@1.1.0/lib/index.min.js
+
+%% js
+ode45 = module.exports
+
+%% resource
+https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.36.1/plotly.min.js
+
+%% resource
+https://d3js.org/d3.v5.min.js
+
+
+%% js
+function initPlot() {
+  xaxis = {nticks: 5, showline: true, mirror: 'ticks', title: 'x (m)'}
+  yaxis = {nticks: 5, showline: true, mirror: 'ticks', title: 'y (m)'}
+  Plotly.newPlot("rs-graph", {data: data, layout: {xaxis: xaxis, yaxis: yaxis}});
+}
+
+
+function linspace(start, stop, nSteps) {
+  let delta = (stop-start) / (nSteps-1)
+  return d3.range(start, stop+delta, delta).slice(0, nSteps)
+}
+
+
+xBound = [-50e3, 50e3];
+yBound = [0, 20e3];
+x = linspace(xBound[0], xBound[1], 50)
+y = linspace(yBound[0], yBound[1], 50)
+gridX = Array(x.length).fill().map(() => Array(y.length).fill(0))
+gridY = Array(x.length).fill().map(() => Array(y.length).fill(0))
+
+for (let i = 0; i < x.length; i++) {
+  for (let j = 0; j < y.length; j++) {
+    gridX[i][j] = x[i]
+    gridY[i][j] = y[j]
+  }
+}
+
+function strain_from_slip(slip, D) {
+  strain = Array(50).fill().map(() => Array(50).fill(0))
+  for (let i = 0; i < 50; i++) {
+    for (let j = 0; j < 50; j++) {
+      strain[i][j] = gridX[i][j] / (gridX[i][j]**2 + (gridY[i][j] + D)**2) - gridX[i][j] / (gridX[i][j]**2 + (gridY[i][j] - D)**2)
+      //strain[i][j] = gridX[i][j]**2
+    }
+  }
+  return strain;
+}
+
+strain = strain_from_slip(1, 10e3)
+
+var data = [ {
+  z: strain,
+  colorscale: 'Picnic',
+  type: 'contour'
+} ];
+
+initPlot();
+
+
+%% md
+<div id="rs-graph"></div>
+
+
+
+
+</script>
+<div id='page'></div>
+<script src='https://iodide.io/master/iodide.master.js'></script>
+</body>
+</html>
