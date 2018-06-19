@@ -50,8 +50,8 @@ function linspace(start, stop, nSteps) {
 
 xBound = [-50e3, 50e3];
 yBound = [0, 20e3];
-x = linspace(xBound[0], xBound[1], 50)
-y = linspace(yBound[0], yBound[1], 50)
+x = linspace(xBound[0], xBound[1], 500)
+y = linspace(yBound[0], yBound[1], 500)
 gridX = Array(x.length).fill().map(() => Array(y.length).fill(0))
 gridY = Array(x.length).fill().map(() => Array(y.length).fill(0))
 
@@ -63,21 +63,24 @@ for (let i = 0; i < x.length; i++) {
 }
 
 function strain_from_slip(slip, D) {
-  strain = Array(50).fill().map(() => Array(50).fill(0))
-  for (let i = 0; i < 50; i++) {
-    for (let j = 0; j < 50; j++) {
+  strain = Array(500).fill().map(() => Array(500).fill(0))
+  for (let i = 0; i < 500; i++) {
+    for (let j = 0; j < 500; j++) {
       strain[i][j] = gridX[i][j] / (gridX[i][j]**2 + (gridY[i][j] + D)**2) - gridX[i][j] / (gridX[i][j]**2 + (gridY[i][j] - D)**2)
-      //strain[i][j] = gridX[i][j]**2
+      strain[i][j] = Math.abs(strain[i][j])
+      strain[i][j] = Math.log10(strain[i][j])
     }
   }
   return strain;
 }
 
-strain = strain_from_slip(1, 10e3)
+strain = strain_from_slip(1, 15e3)
 
 var data = [ {
-  z: strain,
-  colorscale: 'Picnic',
+  z: _.zip(...strain),
+  x: x,
+  y: y,
+  colorscale: 'YIGnBu',
   type: 'contour'
 } ];
 
