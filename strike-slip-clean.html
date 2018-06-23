@@ -35,37 +35,39 @@ https://d3js.org/d3.v5.min.js
 
 
 %% js
+// High-level globals
+XLIM = [-50e3, 50e3];
+YLIM = [-20e3, 0];
+var NX = 300
+var NY = 300
+var x = linspace(XLIM[0], XLIM[1], NY)
+var y = linspace(YLIM[0], YLIM[1], NY)
+var gridX = Array(NX).fill().map(() => Array(NY).fill(0))
+var gridY = Array(NX).fill().map(() => Array(NY).fill(0))
+
+// High-level functions
 function initPlot() {
   xaxis = {nticks: 5, showline: true, mirror: 'ticks', title: 'x (m)'}
   yaxis = {nticks: 5, showline: true, mirror: 'ticks', title: 'y (m)'}
   Plotly.newPlot("rs-graph", {data: data, layout: {xaxis: xaxis, yaxis: yaxis}});
 }
 
-
 function linspace(start, stop, nSteps) {
-  let delta = (stop-start) / (nSteps-1)
+  var delta = (stop-start) / (nSteps-1)
   return d3.range(start, stop+delta, delta).slice(0, nSteps)
 }
 
-
-xBound = [-50e3, 50e3];
-yBound = [0, 20e3];
-x = linspace(xBound[0], xBound[1], 500)
-y = linspace(yBound[0], yBound[1], 500)
-gridX = Array(x.length).fill().map(() => Array(y.length).fill(0))
-gridY = Array(x.length).fill().map(() => Array(y.length).fill(0))
-
-for (let i = 0; i < x.length; i++) {
-  for (let j = 0; j < y.length; j++) {
+for (let i = 0; i < NX; i++) {
+  for (let j = 0; j < NY; j++) {
     gridX[i][j] = x[i]
     gridY[i][j] = y[j]
   }
 }
 
 function strain_from_slip(slip, D) {
-  strain = Array(500).fill().map(() => Array(500).fill(0))
-  for (let i = 0; i < 500; i++) {
-    for (let j = 0; j < 500; j++) {
+  strain = Array(NX).fill().map(() => Array(NY).fill(0))
+  for (let i = 0; i < NX; i++) {
+    for (let j = 0; j < NY; j++) {
       strain[i][j] = gridX[i][j] / (gridX[i][j]**2 + (gridY[i][j] + D)**2) - gridX[i][j] / (gridX[i][j]**2 + (gridY[i][j] - D)**2)
       strain[i][j] = Math.abs(strain[i][j])
       strain[i][j] = Math.log10(strain[i][j])
@@ -74,7 +76,7 @@ function strain_from_slip(slip, D) {
   return strain;
 }
 
-strain = strain_from_slip(1, 15e3)
+var strain = strain_from_slip(1, 1e3)
 
 var data = [ {
   z: _.zip(...strain),
