@@ -47,8 +47,8 @@ var gridY = Array(NX).fill().map(() => Array(NY).fill(0))
 
 // High-level functions
 function initPlot() {
-  xaxis = {nticks: 5, showline: true, mirror: 'ticks', title: 'x (m)'}
-  yaxis = {nticks: 5, showline: true, mirror: 'ticks', title: 'y (m)'}
+  xaxis = {nticks: 3, showline: true, mirror: 'ticks', title: 'x (m)'}
+  yaxis = {nticks: 2, showline: true, mirror: 'ticks', title: 'y (m)'}
   Plotly.newPlot("rs-graph", {data: data, layout: {xaxis: xaxis, yaxis: yaxis}});
 }
 
