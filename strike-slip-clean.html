@@ -57,10 +57,12 @@ function linspace(start, stop, nSteps) {
   return d3.range(start, stop+delta, delta).slice(0, nSteps)
 }
 
-for (let i = 0; i < NX; i++) {
-  for (let j = 0; j < NY; j++) {
-    gridX[i][j] = x[i]
-    gridY[i][j] = y[j]
+function meshgrid() {
+  for (let i = 0; i < NX; i++) {
+    for (let j = 0; j < NY; j++) {
+      gridX[i][j] = x[i]
+      gridY[i][j] = y[j]
+    }
   }
 }
 
@@ -76,7 +78,8 @@ function strain_from_slip(slip, D) {
   return strain;
 }
 
-var strain = strain_from_slip(1, 10e3)
+meshgrid();
+var strain = strain_from_slip(1, 10e3);
 
 var data = [ {
   z: _.zip(...strain),
