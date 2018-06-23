@@ -38,8 +38,8 @@ https://d3js.org/d3.v5.min.js
 // High-level globals
 XLIM = [-50e3, 50e3];
 YLIM = [-20e3, 0];
-var NX = 300
-var NY = 300
+var NX = 100
+var NY = 100
 var x = linspace(XLIM[0], XLIM[1], NY)
 var y = linspace(YLIM[0], YLIM[1], NY)
 var gridX = Array(NX).fill().map(() => Array(NY).fill(0))
@@ -86,7 +86,17 @@ var data = [ {
   x: x,
   y: y,
   colorscale: 'YIGnBu',
-  type: 'contour'
+  type: 'contour',
+  colorbar:{
+    thickness: 10,
+    thicknessmode: 'pixels',
+    len: 0.9,
+    lenmode: 'fraction',
+    outlinewidth: 1
+  },
+  line:{
+    smoothing: 0.85
+  }
 } ];
 
 initPlot();
